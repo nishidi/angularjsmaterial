@@ -1,0 +1,66 @@
+<html ng-app="MyApp">  
+  <head>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+  </head>  
+  <body>
+    <div class="sliderdemoBasicUsage" ng-controller="AppCtrl" style="margin:50px;"> 
+      <b>Principal Amount :</b> <input type="number" ng-model="pamount" name="pamount" ng-change="wscalculateemi()" /> in Lakhs
+  
+      <md-content style="margin: 16px; padding:16px">
+        <md-slider-container>
+          <md-slider class="md-primary" md-discrete="" step="50000"  min="50000" max="3000000"  ng-model="pamount" id="principal" ng-change="wscalculateemi()"></md-slider>
+        </md-slider-container>
+      </md-content>
+  
+      <b>Interest Rate : </b><input type="number" ng-model="irate" name="irate" ng-change="wscalculateemi()" /> in %
+      <md-content style="margin: 16px; padding:16px">
+        <md-slider-container>
+          <md-slider class="md-primary" md-discrete="" step="1" ng-model="irate" min="5" max="25" id="rate" ng-change="wscalculateemi()"></md-slider>
+        </md-slider-container>
+      </md-content>
+  
+      <b>No of Years : </b><input type="number" ng-model="yrs" name="yrs" ng-change="wscalculateemi()" />
+    <md-content style="margin: 16px; padding:16px">
+      <md-slider-container>
+        <md-slider flex="" ng-model="yrs" md-discrete="" step="1" min="1" max="30"   id="years" class="md-primary"
+          ng-change="wscalculateemi()"></md-slider>
+      </md-slider-container>
+    </md-content>
+  
+  
+ <b> Monthly EMI :</b> <span>{{emi | currency: "&#8377"}}</span><span style="margin-left:50px;"><b>Total Interest : </b> {{totalinterest | currency: "&#8377"}}</span> 
+  <span style="margin-left:50px;"><b>Total Payment :</b>{{totalamount | currency: "&#8377"}}</span>
+  <br/>
+  <br/>
+ <b>Formula for EMI Calculation </b>
+  <pre>
+    EMI = [P x R x (1+R)^N]/[(1+R)^N-1] : where P stands for the loan amount or principal, 
+    R is the interest rate per month i.e if the interest rate per annum is 11%, then the rate of interest will be 11/(12 x 100)], 
+    and N is the number of monthly instalments.If N is in years it will be N*12.
+
+    Total Interest = EMI * Years * 12 - Principal Amount
+
+    Total Payment = Prinicipal Amount + Total Interest
+  </pre>
+  </div>
+  <script type="text/javascript">
+	var app = angular.module('MyApp', ['ngMaterial']);
+	app.controller('AppCtrl', function ($scope) {
+	  $scope.emi = 0;
+	  $scope.totalinterest = 0;
+	  $scope.totalamount = 0;
+	  $scope.wscalculateemi = function () {
+		let irate = $scope.irate / 12 / 100;
+		var k = Math.pow((1 + irate), $scope.yrs * 12);
+		$scope.emi = Math.round(($scope.pamount * irate * k) / (k - 1));
+		$scope.totalinterest = $scope.emi * $scope.yrs * 12 - $scope.pamount;
+		$scope.totalamount = $scope.pamount + $scope.totalinterest;
+	  }
+	});  
+  </script>
+  </body>  
+</html>
